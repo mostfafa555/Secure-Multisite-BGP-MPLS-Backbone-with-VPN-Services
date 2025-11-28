@@ -1,0 +1,142 @@
+system-view
+sysname BR-CE
+clock timezone Cairo add 2
+
+interface GigabitEthernet0/0/0
+ ip address 172.16.2.2 255.255.255.252
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/1
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/1.10
+ encapsulation dot1q 10
+ ip address 10.2.1.1 255.255.255.0
+quit
+
+interface GigabitEthernet0/0/1.20
+ encapsulation dot1q 20
+ ip address 10.2.2.1 255.255.255.0
+quit
+
+interface LoopBack0
+ ip address 10.2.255.254 255.255.255.255
+quit
+
+isis 1
+ net 49.0002.0000.0000.0002.00
+quit
+
+interface GigabitEthernet0/0/0
+ isis enable 1
+quit
+
+interface GigabitEthernet0/0/1
+ isis enable 1
+quit
+
+bgp 200
+ ipv4-family unicast
+  peer 172.16.2.1 as-number 64512
+  peer 172.16.2.1 enable
+  network 10.2.1.0 255.255.255.0
+  network 10.2.2.0 255.255.255.0
+  network 10.2.255.254 255.255.255.255
+  undo synchronization
+ quit
+quit
+
+save
+
+
+******************************************
+system-view
+sysname HQ-CE
+clock timezone Cairo add 2
+
+interface GigabitEthernet0/0/0
+ ip address 172.16.1.2 255.255.255.252
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/1
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/1.10
+ encapsulation dot1q 10
+ ip address 10.1.1.1 255.255.255.0
+quit
+
+interface GigabitEthernet0/0/1.20
+ encapsulation dot1q 20
+ ip address 10.1.2.1 255.255.255.0
+quit
+
+interface LoopBack0
+ ip address 10.1.255.254 255.255.255.255
+quit
+
+isis 1
+ net 49.0001.0000.0000.0001.00
+quit
+
+interface GigabitEthernet0/0/0
+ isis enable 1
+quit
+
+interface GigabitEthernet0/0/1
+ isis enable 1
+quit
+
+bgp 100
+ ipv4-family unicast
+  peer 172.16.1.1 as-number 64512
+  peer 172.16.1.1 enable
+  network 10.1.1.0 255.255.255.0
+  network 10.1.2.0 255.255.255.0
+  network 10.1.255.254 255.255.255.255
+  undo synchronization
+ quit
+quit
+
+save
+
+
+**********************************
+system-view
+sysname ISP-R
+clock timezone Cairo add 2
+
+interface GigabitEthernet0/0/0
+ ip address 172.16.1.1 255.255.255.252
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/1
+ ip address 172.16.2.1 255.255.255.252
+ undo shutdown
+quit
+
+interface GigabitEthernet0/0/2
+ ip address 203.0.113.1 255.255.255.0
+ undo shutdown
+quit
+
+interface LoopBack0
+ ip address 2.2.2.2 255.255.255.255
+quit
+
+bgp 64512
+ ipv4-family unicast
+  peer 172.16.1.2 as-number 100
+  peer 172.16.1.2 enable
+  peer 172.16.2.2 as-number 200
+  peer 172.16.2.2 enable
+  undo synchronization
+ quit
+quit
+
+save

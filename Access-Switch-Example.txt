@@ -1,0 +1,10 @@
+system-view
+sysname ACCESS-DEPT1
+
+vlan 10
+quit
+
+interface GigabitEthernet0/0/1
+ port link-type access
+ port default vlan 10
+ quit

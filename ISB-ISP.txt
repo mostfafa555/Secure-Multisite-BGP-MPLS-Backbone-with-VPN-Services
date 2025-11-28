@@ -1,0 +1,33 @@
+system-view
+sysname ISB-ISP
+
+interface LoopBack0
+ ip address 1.1.1.1 255.255.255.255
+ quit
+
+interface GigabitEthernet0/0/0
+ ip address 172.16.1.2 255.255.255.252
+ quit
+
+interface GigabitEthernet0/0/1
+ ip address 172.16.2.2 255.255.255.252
+ quit
+
+interface GigabitEthernet0/0/2
+ ip address 203.0.113.1 255.255.255.0
+ quit
+
+bgp 65000
+ router-id 1.1.1.1
+ peer 172.16.1.1 as-number 100
+ peer 172.16.1.1 enable
+ peer 172.16.2.1 as-number 200
+ peer 172.16.2.1 enable
+ ipv4-family unicast
+  network 203.0.113.0 255.255.255.0
+  peer 172.16.1.1 activate
+  peer 172.16.2.1 activate
+  quit
+ quit
+
+ip route-static 0.0.0.0 0 203.0.113.254

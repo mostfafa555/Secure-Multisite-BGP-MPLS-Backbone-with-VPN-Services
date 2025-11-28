@@ -1,0 +1,79 @@
+system-view
+sysname HQ-R1
+
+interface GigabitEthernet0/0/0
+ ip address 172.16.1.1 255.255.255.252
+ quit
+
+interface GigabitEthernet0/0/1
+ ip address 10.1.1.1 255.255.255.0
+ quit
+
+interface GigabitEthernet0/0/2
+ ip address 198.51.100.1 255.255.255.0
+ quit
+
+ip route-static 198.51.100.2 32 198.51.100.254
+ip route-static 0.0.0.0 0 172.16.1.2
+
+bgp 100
+ router-id 10.1.1.1
+ peer 172.16.1.2 as-number 65000
+ peer 172.16.1.2 enable
+ ipv4-family unicast
+  network 10.1.1.0 255.255.255.0
+  peer 172.16.1.2 activate
+  quit
+ quit
+
+acl 3000
+ rule 5 permit ip source 10.1.1.0 0.0.0.255 destination 10.2.2.0 0.0.0.255
+ quit
+
+isakmp policy 10
+ authentication-mode pre-share
+ encryption-algorithm aes-cbc-128
+ integrity-algorithm sha1
+ dh group2
+ sa-duration 3600
+ quit
+
+isakmp key YourPSK address 198.51.100.2
+
+ipsec policy-template TEMP 1
+ transform esp-aes esp-sha-hmac
+ sa-duration 3600
+ quit
+
+ipsec policy IPSEC 10 isakmp
+ security acl 3000
+ ike-peer 198.51.100.2
+ policy-template TEMP 1
+ quit
+
+interface GigabitEthernet0/0/2
+ ipsec policy IPSEC
+ quit
+
+dhcp enable
+ip pool HQ-POOL
+ network 10.1.1.0 mask 255.255.255.0
+ gateway-list 10.1.1.1
+ dns-list 8.8.8.8
+ excluded-ip-address 10.1.1.1 10.1.1.20
+ quit
+
+interface GigabitEthernet0/0/1
+ dhcp select global
+ quit
+
+isis 1
+ is-level level-1
+ network-entity 49.0001.0000.0000.0001.00
+ undo isis silent
+interface GigabitEthernet0/0/1
+ isis enable 1
+ quit
+interface GigabitEthernet0/0/2
+ isis enable 1
+ quit
